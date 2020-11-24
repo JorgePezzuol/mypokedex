@@ -1,86 +1,111 @@
 <template>
-    <div class="forest">
-      <div id="pokedex">
-        <div class="sensor">
-          <button></button>
+  <div class="forest">
+    <div id="pokedex">
+      <div class="sensor">
+        <button></button>
+      </div>
+      <div class="camera-display">
+        <img v-bind:src="pokemon.mainImg" />
+      </div>
+      <div class="divider"></div>
+      <div class="stats-display" :style="{ opacity: opacity }">
+        <h2>{{ pokemon.name }}</h2>
+        <h3>Abilities</h3>
+        <ul>
+          <li>{{ pokemon.firstAbility }}</li>
+          <li>{{ pokemon.secondAbility }}</li>
+        </ul>
+        <h3>Moves</h3>
+        <ul>
+          <li>{{ pokemon.firstMove }}</li>
+          <li>{{ pokemon.secondMove }}</li>
+        </ul>
+      </div>
+      <div class="botom-actions">
+        <div id="actions">
+          <button class="a"></button>
         </div>
-        <div class="camera-display">
-          <img src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png"/>
-        </div>
-        <div class="divider"></div>
-        <div class="stats-display">
-          <h2>Charmander</h2>
-          <h3>Abilities</h3>
-          <ul>
-            <li>Solar-power</li>
-            <li>Blaze</li>
-          </ul>
-          <h3>Moves</h3>
-          <ul>
-            <li>dragon-rage</li>
-            <li>dragon-breath</li>
-            <li>dragon-claw</li>
-          </ul>
-        </div>
-        <div class="botom-actions">
-          <div id="actions">
-            <button class="a"></button>
-          </div>
-          <div id="cross">
-            <button class="cross-button up"></button>
-            <button class="cross-button right"></button>
-            <button class="cross-button down"></button>
-            <button class="cross-button left"></button>
-            <div class="cross-button center"> </div>
-          </div>
-        </div>
-        <div class="input-pad"><input v-model="pokemonName" type="text" /></div>
-        <div class="bottom-modes">
-            <button class="level-button"></button>
-            <button class="level-button"></button>
-            <button class="level-button"></button>
-            <button class="level-button"></button>
-            <button v-on:click="search()" class="pokedex-mode black-button">Pokedex</button>
-            <button class="game-mode black-button">Game</button>
+        <div id="cross">
+          <button class="cross-button up"></button>
+          <button class="cross-button right"></button>
+          <button class="cross-button down"></button>
+          <button class="cross-button left"></button>
+          <div class="cross-button center"></div>
         </div>
       </div>
+      <div class="input-pad">
+        <input
+          @change="isEmpty()"
+          @keyup.enter="search()"
+          v-model="pokemon.name"
+          type="text"
+        />
+      </div>
+      <div class="bottom-modes">
+        <button class="level-button"></button>
+        <button class="level-button"></button>
+        <button class="level-button"></button>
+        <button class="level-button"></button>
+        <button v-on:click="search()" class="pokedex-mode black-button">
+          Pokedex
+        </button>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'PokedexComponent',
+  name: "PokedexComponent",
   data() {
     return {
-        pokemonName: ""
-    }
+      pokemon: {
+        mainImg: "",
+        name: "",
+        firstAbility: "",
+        secondAbility: "",
+        firstMove: "",
+        secondMove: "",
+      },
+      opacity: 0.3,
+    };
   },
   methods: {
-
+    isEmpty() {
+      if (this.pokemon.name == "") {
+        this.opacity = 0.3;
+        this.pokemon.mainImg = "";
+      }
+    },
     search() {
+      if (this.pokemon.name != "") {
+        this.$axios
+          .get(`http://localhost:8000/api/pokedex/${this.pokemon.name}`, {
+            headers: {
+              Authorization: `bearer ${this.$cookies.get("token")}`,
+            },
+          })
+          .then((response) => {
+            this.pokemon.firstAbility = response.data.abilities[0].ability.name;
+            this.pokemon.secondAbility =
+              response.data.abilities[1].ability.name;
 
-        if(this.pokemonName != "") {
+            this.pokemon.firstMove = response.data.moves[0].move.name;
+            this.pokemon.secondMove = response.data.moves[1].move.name;
 
-            this.$axios.get(`http://localhost:8000/api/pokedex/${this.pokemonName}`, {
-              headers: {
-                'Authorization': `bearer ${this.$cookies.get("token")}`
-              }
-            })
-            .then(response => {
-                console.log(response.data.abilities[0]);
-            })
-            .catch(error => {
-                alert("Not authorized");
-            });
-        }
-    }
-  }
-}
+            this.pokemon.mainImg = response.data.sprites.front_default;
+
+            this.opacity = 1.0;
+          })
+          .catch((error) => {
+            alert("Not authorized");
+          });
+      }
+    },
+  },
+};
 </script>
 
-
 <style scoped>
-
-@import '../assets/pokedex.css';
-
+@import "../assets/pokedex.css";
 </style>

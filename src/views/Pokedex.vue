@@ -1,15 +1,14 @@
 <template>
-	<PokedexComponent/>
+  <PokedexComponent />
 </template>
 
 <script>
-
-import PokedexComponent from '@/components/PokedexComponent.vue'
+import PokedexComponent from "@/components/PokedexComponent.vue";
 
 export default {
-  name: 'Pokedex',
+  name: "Pokedex",
   components: {
-    PokedexComponent
-  }
-}
+    PokedexComponent,
+  },
+};
 </script>

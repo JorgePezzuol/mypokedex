@@ -180,7 +180,7 @@
 .pokedex-mode {
   grid-row-start: 3;
   grid-column-start: 1;
-  grid-column-end: 3;
+  grid-column-end: 5;
 }
 .game-mode {
   grid-row-start: 3;
