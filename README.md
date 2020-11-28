@@ -1,25 +1,34 @@
-# mypokedex
+# Project Name
+> Pokedex
 
-## Project setup
-```
-npm install
-```
+## Table of contents
+* [General info](#general-info)
+* [Screenshots](#screenshots)
+* [Technologies](#technologies)
+* [Setup](#setup)
+* [Status](#status)
+* [Contact](#contact)
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## General info
+Simple pokedex created to practice Vue with an API created with Lumen
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Screenshots
+![](screen-recording.gif)
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Technologies
+* "axios": "^0.21.0",
+* "core-js": "^3.6.5",
+* "vue": "^2.6.11",
+* "vue-axios": "^3.1.3",
+* "vue-cookies": "^1.7.4",
+* "vue-router": "^3.2.0"
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Setup
+* composer install
+* vue ui
 
+## Status
+Project is: under development
+
+## Contact
+Created by [@jorgepezzuol](https://www.linkedin.com/in/jorge-pezzuol/)
