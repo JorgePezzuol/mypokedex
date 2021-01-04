@@ -10,7 +10,7 @@
 * [Contact](#contact)
 
 ## General info
-Simple pokedex created to practice Vue with an API created with Lumen
+Simple API created to practice JWT/Lumen/VueJs (API: https://github.com/JorgePezzuol/mypokedex-api)
 
 ## Screenshots
 ![](screen-recording.gif)
