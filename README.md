@@ -1,5 +1,5 @@
 # Project Name
-> mypokedex - https://mypokedex-jorge.netlify.app/pokedex
+> mypokedex - https://mypokedex-jorge.netlify.app
 
 ## Table of contents
 * [General info](#general-info)
