@@ -2,23 +2,26 @@
   <div id="forest">
     <div id="pokedex">
       <div class="sensor">
-        <button></button>
+        <button :class="{ 'sensor-pulsating': isLoading }"></button>
       </div>
       <div class="camera-display">
-        <img v-bind:src="pokemon.mainImg" />
+        <img
+          v-if="pokemon.sprites.front_default !== '/'"
+          v-bind:src="pokemon.sprites.front_default"
+        />
       </div>
       <div class="divider"></div>
       <div class="stats-display" :style="{ opacity: opacity }">
         <h2>{{ pokemon.name }}</h2>
         <h3>Abilities</h3>
         <ul>
-          <li>{{ pokemon.firstAbility }}</li>
-          <li>{{ pokemon.secondAbility }}</li>
+          <li>{{ pokemon.abilities[0].ability.name }}</li>
+          <li>{{ pokemon.abilities[1].ability.name }}</li>
         </ul>
         <h3>Moves</h3>
         <ul>
-          <li>{{ pokemon.firstMove }}</li>
-          <li>{{ pokemon.secondMove }}</li>
+          <li>{{ pokemon.moves[0].move.name }}</li>
+          <li>{{ pokemon.moves[1].move.name }}</li>
         </ul>
       </div>
       <div class="botom-actions">
@@ -34,7 +37,13 @@
         </div>
       </div>
       <div class="input-pad">
-        <input @change="isEmpty()" v-model="pokemon.name" type="text" />
+        <input
+          @keypress.enter="searchByPokemonName()"
+          @change="isEmpty()"
+          v-model="pokemonName"
+          type="text"
+          placeholder="Pokemon name"
+        />
       </div>
       <div class="bottom-modes">
         <button class="level-button"></button>
@@ -42,7 +51,7 @@
         <button class="level-button"></button>
         <button class="level-button"></button>
         <button @click="searchByPokemonName()" class="pokedex-mode black-button">
-          Pokedex
+          Search
         </button>
       </div>
     </div>
@@ -54,37 +63,69 @@ import { pokedexService } from "../services/pokedex.service";
 export default {
   data() {
     return {
+      pokemonName: "",
       pokemon: {
-        mainImg: "",
         name: "",
-        firstAbility: "",
-        secondAbility: "",
-        firstMove: "",
-        secondMove: "",
+        abilities: [{ ability: { name: "" } }, { ability: { name: "" } }],
+        moves: [{ move: { name: "" } }, { move: { name: "" } }],
+        sprites: { front_default: "/" },
       },
       opacity: 0.3,
+      isLoading: false,
+      hasError: false,
     };
   },
   methods: {
+    clear() {
+      Object.assign(this.$data, this.$options.data.call(this));
+    },
     isEmpty() {
       if (this.pokemon.name == "") {
         this.opacity = 0.3;
         this.pokemon.mainImg = "";
       }
     },
-    async searchByPokemonName() {
-      const response = await pokedexService.searchByPokemonName(this.pokemon.name);
+    _showProgressBar() {
+      const btns = document.querySelectorAll(".level-button");
+      btns.forEach((el, index) => {
+        setTimeout(() => {
+          if (!this.hasError) {
+            el.classList.add("progressbar");
+          }
+        }, index * 800);
+      });
+    },
+    showProgressBar() {
+      this.isLoading = true;
+      this.hasError = false;
+      this.clearProgressBar();
+      this._showProgressBar();
+    },
+    clearProgressBar() {
+      const btns = document.querySelectorAll(".level-button");
+      btns.forEach(function (el, index) {
+        el.classList.remove("progressbar");
+      });
+    },
+    _clearProgressBar() {
+      this.clear();
+      this.clearProgressBar();
+      this.isLoading = false;
+      this.hasError = true;
+    },
 
+    async searchByPokemonName() {
+      this.showProgressBar();
+      const response = await pokedexService.searchByPokemonName(this.pokemonName);
       if (response) {
-        this.pokemon.firstAbility = response.abilities[0].ability.name;
-        this.pokemon.secondAbility = response.abilities[1].ability.name;
-        this.pokemon.firstMove = response.moves[0].move.name;
-        this.pokemon.secondMove = response.moves[1].move.name;
-        this.pokemon.mainImg = response.sprites.front_default;
+        ["name", "abilities", "moves", "sprites"].forEach(
+          (prop) => (this.pokemon[prop] = response[prop])
+        );
         this.opacity = 1.0;
       } else {
-        this.pokemon.name = "err";
+        this._clearProgressBar();
       }
+      this.isLoading = false;
     },
   },
 };
