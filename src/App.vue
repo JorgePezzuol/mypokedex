@@ -1,5 +1,14 @@
 <template>
   <div id="app">
-    <router-view/>
+    <Pokedex />
   </div>
 </template>
+
+<script>
+import Pokedex from "./views/Pokedex";
+export default {
+  components: {
+    Pokedex,
+  },
+};
+</script>
