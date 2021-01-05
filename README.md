@@ -1,16 +1,8 @@
 # Project Name
 > mypokedex - https://mypokedex-jorge.netlify.app
 
-## Table of contents
-* [General info](#general-info)
-* [Screenshots](#screenshots)
-* [Technologies](#technologies)
-* [Setup](#setup)
-* [Status](#status)
-* [Contact](#contact)
-
 ## General info
-Simple API created to practice Vue with API calls (API: http://pokeapi.co)
+Simple pokedex created to practice Vue with API calls (API: http://pokeapi.co)
 
 ## Technologies
 * "axios": "^0.21.0",
