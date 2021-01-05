@@ -1,12 +1,12 @@
 import _axios from "../plugins/axios";
 
 export const pokedexService = {
-  searchByPokemonName,
+  searchByPokemonByNameOrNumber,
 };
 
-async function searchByPokemonName(name) {
+async function searchByPokemonByNameOrNumber(nameOrNumber) {
   try {
-    const response = await _axios.get(`/pokemon/${name}`);
+    const response = await _axios.get(`/pokemon/${nameOrNumber}`);
 
     if (response.status === 200) {
       return response.data;

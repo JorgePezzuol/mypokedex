@@ -25,20 +25,20 @@
         </ul>
       </div>
       <div class="botom-actions">
-        <div id="actions">
+        <div id="actions" @click="searchRandomPokemom()">
           <button class="a"></button>
         </div>
         <div id="cross">
-          <button class="cross-button up"></button>
-          <button class="cross-button right"></button>
-          <button class="cross-button down"></button>
-          <button class="cross-button left"></button>
+          <button @click="searchNextPokemon(true)" class="cross-button up"></button>
+          <button @click="searchNextPokemon(true)" class="cross-button left"></button>
+          <button @click="searchNextPokemon(false)" class="cross-button down"></button>
+          <button @click="searchNextPokemon(false)" class="cross-button right"></button>
           <div class="cross-button center"></div>
         </div>
       </div>
       <div class="input-pad">
         <input
-          @keypress.enter="searchByPokemonName()"
+          @keypress.enter="searchByPokemonByNameOrNumber()"
           @change="isEmpty()"
           v-model="pokemonName"
           type="text"
@@ -50,7 +50,11 @@
         <button class="level-button"></button>
         <button class="level-button"></button>
         <button class="level-button"></button>
-        <button @click="searchByPokemonName()" class="pokedex-mode black-button">
+        <button
+          :disabled="!pokemonName"
+          @click="searchByPokemonByNameOrNumber()"
+          class="pokedex-mode black-button"
+        >
           Search
         </button>
       </div>
@@ -73,6 +77,7 @@ export default {
       opacity: 0.3,
       isLoading: false,
       hasError: false,
+      pokemonNumber: 0,
     };
   },
   methods: {
@@ -113,10 +118,7 @@ export default {
       this.isLoading = false;
       this.hasError = true;
     },
-
-    async searchByPokemonName() {
-      this.showProgressBar();
-      const response = await pokedexService.searchByPokemonName(this.pokemonName);
+    _handleResponse(response) {
       if (response) {
         ["name", "abilities", "moves", "sprites"].forEach(
           (prop) => (this.pokemon[prop] = response[prop])
@@ -125,6 +127,38 @@ export default {
       } else {
         this._clearProgressBar();
       }
+    },
+    async searchByPokemonByNameOrNumber() {
+      this.showProgressBar();
+      const response = await pokedexService.searchByPokemonByNameOrNumber(
+        this.pokemonName
+      );
+      this._handleResponse(response);
+      this.isLoading = false;
+    },
+    async searchNextPokemon(leftOrRight) {
+      this.showProgressBar();
+      leftOrRight === true ? this.pokemonNumber++ : this.pokemonNumber--;
+
+      this.pokemonNumber =
+        this.pokemonNumber <= 0
+          ? 150
+          : this.pokemonNumber >= 150
+          ? 150
+          : this.pokemonNumber;
+
+      const response = await pokedexService.searchByPokemonByNameOrNumber(
+        this.pokemonNumber
+      );
+      this._handleResponse(response);
+      this.isLoading = false;
+    },
+    async searchRandomPokemom() {
+      this.showProgressBar();
+      const response = await pokedexService.searchByPokemonByNameOrNumber(
+        Math.floor(Math.random() * 151)
+      );
+      this._handleResponse(response);
       this.isLoading = false;
     },
   },
